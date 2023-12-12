@@ -98,19 +98,33 @@ shiny = function(background = NULL, port = 1996){
                 textAreaInput("rcode", "Enter R code to execute", "", height = "100px"),
                 actionButton("runCode", "Run Code"),
                 tags$hr(),
-                tags$h3("R Code Execution Output:")
-            )
+                tags$h3("R Code Execution Output:"),
+	        # Chat room elements
+                textInput("chatName", "Enter your name:"),
+                textInput("chatMessage", "Enter a message:"),
+                actionButton("sendChat", "Send"),
+                tags$hr(),
+                tags$h3("Chat Messages:")
+            ),
+	    width = 3
         ),
         mainPanel(
             plotOutput("screen"),
             # Add an output element for R code execution results
-            verbatimTextOutput("rcodeOutput")
+            verbatimTextOutput("rcodeOutput"),
+            # Chat messages displayed in the main panel
+            htmlOutput("chatText"),
+	    width = 9
         )
-    )
+     )
 
     server = function(input, output, session){
         autoInvalidate <- reactiveTimer(1000/6, session)
 
+        # Default chat output
+        chatText <- reactiveVal("Welcome to the Tamagotchi Chat!")
+
+	# Buttons
         observeEvent(input$A,.self$click("A"))
         observeEvent(input$B,.self$click("B"))
         observeEvent(input$C,.self$click("C"))
@@ -122,6 +136,18 @@ shiny = function(background = NULL, port = 1996){
 
         # Placeholder for R code execution results
         outputCode <- reactiveVal("")
+
+	    # Observe sending chat message
+    observeEvent(input$sendChat, {
+        newChatMessage <- paste0(chatText(),
+            sprintf("<p><strong>%s:</strong> %s</p>", input$chatName, input$chatMessage))
+        chatText(newChatMessage)
+    })
+
+    # Render chat text output
+    output$chatText <- renderUI({
+        HTML(chatText())
+    })
 
 observeEvent(input$runCode, {
     tryCatch({
