@@ -83,33 +83,68 @@ setRcppClass(Class = "Tama",
         .self$SetCPU(state)
     },
 
-    shiny = function(background = NULL, port = 1996){
+shiny = function(background = NULL, port = 1996){
 
-        options(shiny.port = port)
+    options(shiny.port = port)
 
-        ui = pageWithSidebar(
-            headerPanel(""),
-            sidebarPanel(
-            splitLayout(actionButton("A"," "),
-                        actionButton("B"," "),
-                        actionButton("C"," "))
-            ),
-            mainPanel(plotOutput("screen"))
+    ui = pageWithSidebar(
+        headerPanel("Tamagotchi Emulator"),
+        sidebarPanel(
+            splitLayout(
+                actionButton("A"," "),
+                actionButton("B"," "),
+                actionButton("C"," "),
+                # Add a text area for R code input
+                textAreaInput("rcode", "Enter R code to execute", "", height = "100px"),
+                actionButton("runCode", "Run Code"),
+                tags$hr(),
+                tags$h3("R Code Execution Output:")
+            )
+        ),
+        mainPanel(
+            plotOutput("screen"),
+            # Add an output element for R code execution results
+            verbatimTextOutput("rcodeOutput")
         )
+    )
 
-        server = function(input,output,session){
+    server = function(input, output, session){
+        autoInvalidate <- reactiveTimer(1000/6, session)
 
-            autoInvalidate <- reactiveTimer(1000/6, session)
+        observeEvent(input$A,.self$click("A"))
+        observeEvent(input$B,.self$click("B"))
+        observeEvent(input$C,.self$click("C"))
 
-            observeEvent(input$A,.self$click("A"))
-            observeEvent(input$B,.self$click("B"))
-            observeEvent(input$C,.self$click("C"))
+        output$screen = renderPlot({
+            autoInvalidate()
+            .self$display(background = background)
+        })
 
-            output$screen = renderPlot({
-                autoInvalidate()
-                .self$display(background = background)
-            })
-        }
-        shinyApp(ui, server)
+        # Placeholder for R code execution results
+        outputCode <- reactiveVal("")
+
+observeEvent(input$runCode, {
+    tryCatch({
+        # Evaluate the user code in a local environment
+        result <- eval(parse(text = input$rcode), envir = new.env())
+        outputCode(paste("Result:", result))
+    }, warning = function(w) {
+        # Handle warnings separately if desired
+        outputCode(paste("Warning:", w$message))
+    }, error = function(e) {
+        # Handle errors
+        outputCode(paste("Error:", e$message))
+    }, finally = {
+        # Optional to implement; code here executes regardless of errors or warnings
+    })
+})
+
+        output$rcodeOutput <- renderText({
+            outputCode()
+        })
+
     }
+    shinyApp(ui, server)
+}
+
 ))
