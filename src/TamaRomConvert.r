@@ -1,5 +1,5 @@
 
-setwd("tamaR/src")
+setwd("/srv/shiny-server/tamaR/src")
 
 obj = readBin(con = "rom.bin", what = "raw", n = file.info("rom.bin")$size)
 obj = paste(as.character(obj), collapse = "")
