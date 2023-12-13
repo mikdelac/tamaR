@@ -19,7 +19,10 @@
 #' @export Tama
 #' @exportClass Tama
 #' 
-#' 
+#'
+
+# Initialize a reactive value to store chat messages
+chatHistory <- reactiveVal(data.frame(name = character(), message = character()))
 
 bg = readPNG("img/background.png")
 icons = list()
@@ -148,14 +151,19 @@ shiny = function(background = NULL, port = 1996){
 
 	    # Observe sending chat message
     observeEvent(input$sendChat, {
-        newChatMessage <- paste0(chatText(),
-            sprintf("<p><strong>%s:</strong> %s</p>", input$chatName, input$chatMessage))
-        chatText(newChatMessage)
+       req(input$chatName, input$chatMessage) # Ensure name and message fields not empty
+        # Add the new message to the history
+        newEntry <- data.frame(name = input$chatName, message = input$chatMessage)
+       	chatHistory(rbind(chatHistory(), newEntry))
     })
 
     # Render chat text output
     output$chatText <- renderUI({
-        HTML(chatText())
+      chat_data <- chatHistory()
+      myMessages <- with(chat_data, paste(name, message, sep = ": "))
+      # Create HTML elements to display each message
+      msgs <- lapply(myMessages, tags$p)
+      do.call(tagList, msgs) # Combine all message tags 
     })
 
 observeEvent(input$runCode, {
