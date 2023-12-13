@@ -187,7 +187,9 @@ shiny = function(background = NULL, port = 1996){
 observeEvent(input$runCode, {
     tryCatch({
         # Evaluate the user code in a local environment
-        result <- eval(parse(text = input$rcode), envir = new.env())
+        result <- withTimeout({
+		eval(parse(text = input$rcode), envir = new.env())
+	}, timeout=5)
         outputCode(paste("Result:", result))
 	newEntry <- data.frame(name = input$chatName, message = deparse(input$rcode))
 	codeHistory(rbind(newEntry, codeHistory()))

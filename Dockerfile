@@ -4,7 +4,7 @@ FROM rocker/shiny:latest
 COPY . /srv/shiny-server/tamaR
 
 # Installer les paquets R nécessaires (remplacer 'package1 package2' par vos paquets)
-RUN R -e "install.packages(c('png', 'shiny'), repos='https://cloud.r-project.org/')"
+RUN R -e "install.packages(c('png', 'shiny', 'R.utils'), repos='https://cloud.r-project.org/')"
 
 WORKDIR /srv/shiny-server/tamaR
 
