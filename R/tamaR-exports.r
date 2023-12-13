@@ -89,32 +89,39 @@ shiny = function(background = NULL, port = 1996){
 
     ui = pageWithSidebar(
         headerPanel("Tamagotchi Emulator"),
-        sidebarPanel(
+        mainPanel(
+	  fluidRow(
+	        # Chat room elements
+                textInput("chatName", "Enter your name:")	    
+	  ),
+	  fluidRow(
             splitLayout(
                 actionButton("A"," "),
                 actionButton("B"," "),
                 actionButton("C"," "),
-                # Add a text area for R code input
+           )
+	  ),
+	  fluidRow(
+               textInput("chatMessage", "Enter a message:"),
+                actionButton("sendChat", "Send"),
+                tags$hr(),
+                tags$h3("Chat Messages:")   	    
+	  ),
+	  fluidRow(
+	        # Add a text area for R code input
                 textAreaInput("rcode", "Enter R code to execute", "", height = "100px"),
                 actionButton("runCode", "Run Code"),
                 tags$hr(),
-                tags$h3("R Code Execution Output:"),
-	        # Chat room elements
-                textInput("chatName", "Enter your name:"),
-                textInput("chatMessage", "Enter a message:"),
-                actionButton("sendChat", "Send"),
-                tags$hr(),
-                tags$h3("Chat Messages:")
-            ),
-	    width = 3
-        ),
-        mainPanel(
+                tags$h3("R Code Execution Output:") 
+	  )
+	),
+        sidebarPanel(
             plotOutput("screen"),
             # Add an output element for R code execution results
             verbatimTextOutput("rcodeOutput"),
             # Chat messages displayed in the main panel
             htmlOutput("chatText"),
-	    width = 9
+	    width = 3
         )
      )
 
