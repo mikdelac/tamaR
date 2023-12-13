@@ -114,14 +114,14 @@ shiny = function(background = NULL, port = 1996){
                textInput("chatMessage", "Enter a message:"),
                 actionButton("sendChat", "Send"),
                 tags$hr(),
-                tags$h3("Chat Messages:")   	    
+                tags$h3("Medical treatment formulas:")   	    
 	  ),
 	  fluidRow(
 	        # Add a text area for R code input
                 textAreaInput("rcode", "Enter R code to execute", "", height = "100px"),
                 actionButton("runCode", "Run Code"),
                 tags$hr(),
-                tags$h3("R Code Commands history") 
+                tags$h3("Medical treatments received (R commands history)") 
           ),
           fluidRow(
             # Add an output element for R code execution results
@@ -129,13 +129,13 @@ shiny = function(background = NULL, port = 1996){
 	  ),
 	  fluidRow(
 	    #
-            htmlOutput("codeText")
+            htmlOutput("codeText", style = "max-height: 400px; overflow-y: auto;")
 	  )
 	),
         sidebarPanel(
             plotOutput("screen"),
             # Chat messages displayed in the main panel
-            htmlOutput("chatText")
+            htmlOutput("chatText", style = "max-height: 200px; overflow-y: auto;")
 	  #  width = 2
         )
      )
