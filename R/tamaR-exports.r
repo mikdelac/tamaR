@@ -98,7 +98,7 @@ shiny = function(background = NULL, port = 1996){
             splitLayout(
                 actionButton("A"," "),
                 actionButton("B"," "),
-                actionButton("C"," "),
+                actionButton("C"," ")
            )
 	  ),
 	  fluidRow(
@@ -112,7 +112,10 @@ shiny = function(background = NULL, port = 1996){
                 textAreaInput("rcode", "Enter R code to execute", "", height = "100px"),
                 actionButton("runCode", "Run Code"),
                 tags$hr(),
-                tags$h3("R Code Execution Output:") 
+                tags$h3("R Code Commands history") 
+          ),
+          fluidRow(
+	  
 	  )
 	),
         sidebarPanel(
