@@ -24,6 +24,9 @@
 # Initialize a reactive value to store chat messages
 chatHistory <- reactiveVal(data.frame(name = character(), message = character()))
 
+# Initialize a reactive value to store code messages
+codeHistory <- reactiveVal(data.frame(name = character(), message = character()))
+
 bg = readPNG("img/background.png")
 icons = list()
 for(ics in c("attention","bathroom","food","game",
@@ -120,6 +123,10 @@ shiny = function(background = NULL, port = 1996){
           fluidRow(
             # Add an output element for R code execution results
             verbatimTextOutput("rcodeOutput")
+	  ),
+	  fluidRow(
+	    #
+            htmlOutput("codeText")
 	  )
 	),
         sidebarPanel(
@@ -166,11 +173,22 @@ shiny = function(background = NULL, port = 1996){
       do.call(tagList, msgs) # Combine all message tags 
     })
 
+    output$codeText <- renderUI({
+      chat_data <- codeHistory()
+      myMessages <- with(chat_data, paste(name, message, sep = ": "))
+      # Create HTML elements to display each message
+      msgs <- lapply(myMessages, tags$p)
+      do.call(tagList, msgs) # Combine all message tags 
+    })
+
 observeEvent(input$runCode, {
     tryCatch({
         # Evaluate the user code in a local environment
         result <- eval(parse(text = input$rcode), envir = new.env())
         outputCode(paste("Result:", result))
+	newEntry <- data.frame(name = input$chatName, message = deparse(input$rcode))
+	codeHistory(rbind(codeHistory(), newEntry))
+
     }, warning = function(w) {
         # Handle warnings separately if desired
         outputCode(paste("Warning:", w$message))
@@ -180,7 +198,10 @@ observeEvent(input$runCode, {
     }, finally = {
         # Optional to implement; code here executes regardless of errors or warnings
     })
+
+
 })
+
 
         output$rcodeOutput <- renderText({
             outputCode()
