@@ -115,16 +115,15 @@ shiny = function(background = NULL, port = 1996){
                 tags$h3("R Code Commands history") 
           ),
           fluidRow(
-	  
+            # Add an output element for R code execution results
+            verbatimTextOutput("rcodeOutput")
 	  )
 	),
         sidebarPanel(
             plotOutput("screen"),
-            # Add an output element for R code execution results
-            verbatimTextOutput("rcodeOutput"),
             # Chat messages displayed in the main panel
-            htmlOutput("chatText"),
-	    width = 3
+            htmlOutput("chatText")
+	  #  width = 2
         )
      )
 
