@@ -161,7 +161,7 @@ shiny = function(background = NULL, port = 1996){
        req(input$chatName, input$chatMessage) # Ensure name and message fields not empty
         # Add the new message to the history
         newEntry <- data.frame(name = input$chatName, message = input$chatMessage)
-       	chatHistory(rbind(chatHistory(), newEntry))
+       	chatHistory(rbind(newEntry, chatHistory()))
     })
 
     # Render chat text output
@@ -187,8 +187,7 @@ observeEvent(input$runCode, {
         result <- eval(parse(text = input$rcode), envir = new.env())
         outputCode(paste("Result:", result))
 	newEntry <- data.frame(name = input$chatName, message = deparse(input$rcode))
-	codeHistory(rbind(codeHistory(), newEntry))
-
+	codeHistory(rbind(newEntry, codeHistory()))
     }, warning = function(w) {
         # Handle warnings separately if desired
         outputCode(paste("Warning:", w$message))
