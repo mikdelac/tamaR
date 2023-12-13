@@ -94,19 +94,22 @@ shiny = function(background = NULL, port = 1996){
     options(shiny.port = port)
 
     ui = pageWithSidebar(
-        headerPanel("Tamagotchi Emulator"),
+        headerPanel("Don't let the plant die!"),
         mainPanel(
 	  fluidRow(
 	        # Chat room elements
                 textInput("chatName", "Enter your name:")	    
 	  ),
 	  fluidRow(
-            splitLayout(
-                actionButton("A"," "),
-                actionButton("B"," "),
-                actionButton("C"," ")
-           )
-	  ),
+	      # Radio button input for selecting a name among five options
+	      radioButtons(inputId = "castChoice", 
+			   label = "Choose a cast:",
+			   choices = list("Altruistes" = "cast1",
+					  "Bleeding Edge" = "cast2",
+					  "Érudits" = "cast3",
+					  "Mercenaires" = "cast4",
+					  "Justes" = "cast5"))
+		   ),
 	  fluidRow(
                textInput("chatMessage", "Enter a message:"),
                 actionButton("sendChat", "Send"),
